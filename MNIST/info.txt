@@ -1,0 +1,2 @@
+Both of these examples were taken from "Deep Learning with Python 2" by Francois Chollet. I just organized all the info throughout chapter two of the book, so that it was easier for myself to understand the concepts being presented in the book. 
+
