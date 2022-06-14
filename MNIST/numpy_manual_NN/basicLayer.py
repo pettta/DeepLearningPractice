@@ -29,6 +29,24 @@ class BasicDenseLayer:
             print("Unsupported activation function requested") 
     
     #Backwards pass for layers that also checks for the activation function gradients 
+    """ 
+    Gradient Calculation explanation:
+        Let zL = the output of matmul(input, w) + b at layer L 
+        Let aL = the activated function, ie RELU(zL) = aL 
+        We want to find both: dC/dwL and dC/dbL: 
+            dC/dwL = dC/daL * daL/dzL * dzL/dwL  
+            dC/dbL = dC/daL * daL/dzL * dzL/dbL
+                dC/daL = dinputs at the beginning of the function 
+                daL/dzL = dRelu --> the change that dRelu makes on dinputs in this case 
+                dzL/dwL = aL-1 = inputs 
+                dzL/dbL = 1 
+                
+    Therefore for a single neuron on layer L: 
+            dC/dwL = dinputs (after relu derivative) * inputs
+            dC/dbL = dinputs (after relu derivative) 
+    We can then backpropogate further getting on layer L-1:
+            dC/daL-1 = wL * dinputs 
+    """
     def backwardsPass(self, dinputs, activation=""):
         if activation == "relu":
             dinputs[self.inputs <= 0] = 0 
