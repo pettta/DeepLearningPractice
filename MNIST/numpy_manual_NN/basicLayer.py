@@ -1,4 +1,5 @@
 import numpy as np 
+import random 
 
 class BasicDenseLayer: 
     def __init__(self, input_size, output_size, activation="relu"): 
@@ -50,10 +51,9 @@ class BasicDenseLayer:
     def backwardsPass(self, dinputs, activation=""):
         dvalues = dinputs.copy() 
         if activation == "relu":
-            dvalues = BasicDenseLayer.deltaRelu(dvalues)  
-        
+            dvalues = BasicDenseLayer.deltaRelu(dvalues)
+            
         self.dweights = np.dot(self.inputs.T, dvalues)
-        #print("dweights values:", self.dweights) 
         self.dbiases = np.sum(dvalues, axis=0, keepdims=True) 
         dvalues = np.dot(dvalues, self.W.T) 
         return dvalues
@@ -93,8 +93,7 @@ class BasicDenseLayer:
         
     @staticmethod
     def deltaRelu(x):
-        x[x<=0] = 0
-        x[x>0] = 1 
+        x[x<0] = 0
         return x 
         
     @property 

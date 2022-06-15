@@ -4,11 +4,16 @@ import numpy as np
 from batchGen import BatchGenerator 
 from tensorflow.keras.datasets import mnist 
 
-optimizer = SGD(learning_rate=1e-3) 
+optimizer = SGD(learning_rate=1e-4) 
 
-def update_weights(layers):
-    for layer in layers: 
-        optimizer.apply_gradients(layer)         
+def update_weights(layers): 
+    #print("BEFORE WEIGHTS0:", layers[0].W, "\nBIASES0:", layers[0].b) 
+    optimizer.apply_gradients(layers[0])         
+    #print("AFTER WEIGHTS0:", layers[0].W, "\nBIASES0:", layers[0].b) 
+    #print("BEFORE WEIGHTS1:", layers[1].W, "\nBIASES1:", layers[1].b)
+    optimizer.apply_gradients(layers[1])      
+    #print("AFTER WEIGHTS1:", layers[1].W, "\nBIASES1:", layers[1].b)
+
 
 def one_training_step(model, images_batch, labels_batch): 
     predictions = model(images_batch) 
@@ -29,7 +34,7 @@ def fit(model, images, labels, epochs, batch_size=128):
             images_batch, labels_batch = batch_generator.next() 
             loss = one_training_step(model, images_batch, labels_batch) # would fail here, go to function an implement 
             if batch_counter % 100 == 0: 
-                print(f"loss at batch {batch_counter}: {loss:.2f}")
+                print(f"loss at batch {batch_counter}: loss {loss:.2f}")
 
 # Data set up 
 
@@ -46,6 +51,7 @@ model = BasicSequential([
     BasicDenseLayer(input_size=28*28, output_size=512, activation="relu"),
     BasicDenseLayer(input_size=512, output_size=10, activation="softmax") 
 ])
+
 
 # Forward pass & run 
 fit(model, train_images, train_labels, epochs=10, batch_size=128)
