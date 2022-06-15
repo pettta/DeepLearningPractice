@@ -8,7 +8,7 @@ class BasicDenseLayer:
     
     # Forward pass takes the input matrix from the previous layer and formats it into the next layer, with a proper activation function 
     def forwardPass(self, inputs):
-        self.inputs = inputs 
+        self.inputs = inputs.copy() 
         # Might seem a little redundant to have the matrix multiplication repeated, but no need to do it unless you have an existing activation function 
         if self.activation == "relu":
             inputLayer = np.matmul(inputs, self.W) + self.b
@@ -48,13 +48,15 @@ class BasicDenseLayer:
             dC/daL-1 = wL * dinputs 
     """
     def backwardsPass(self, dinputs, activation=""):
+        dvalues = dinputs.copy() 
         if activation == "relu":
-            dinputs[self.inputs <= 0] = 0 
+            dvalues = BasicDenseLayer.deltaRelu(dvalues)  
         
-        self.dweights = np.dot(self.inputs.T, dinputs)
-        self.dbiases = np.sum(dinputs, axis=0, keepdims=True) 
-        dinputs = np.dot(dinputs, self.W.T) 
-        return dinputs
+        self.dweights = np.dot(self.inputs.T, dvalues)
+        #print("dweights values:", self.dweights) 
+        self.dbiases = np.sum(dvalues, axis=0, keepdims=True) 
+        dvalues = np.dot(dvalues, self.W.T) 
+        return dvalues
     
     
     
@@ -89,6 +91,12 @@ class BasicDenseLayer:
     def sigmoid(x):
         return 1.0 / (1.0 + np.exp(-x))
         
+    @staticmethod
+    def deltaRelu(x):
+        x[x<=0] = 0
+        x[x>0] = 1 
+        return x 
+        
     @property 
     def weights(self):
         return [self.W, self.b]
@@ -106,18 +114,19 @@ class BasicSequential:
         return x 
 
     # backpropogates from the softmax in order to get the changes in weights in biases (gradients)
-    def backwardsPass(self, forwardOutput, trainingSolutions):
-        # Start with the Crossentropy Loss backpropogation 
-        samples = len(forwardOutput) 
-        # Formatting check for one-hot encoding 
-        if len(trainingSolutions.shape) == 2:
-            trainingSolutions = np.argmax(trainingSolutions, axis=1)
-        dinputs = forwardOutput.copy()
+    def backwardsPass(self, forwardOutput, trainingSolutions): 
+        # Start with the Crossentropy Loss & Softmax backpropogation 
+        samples = trainingSolutions.shape[0]
+        # Need to do another softmax of the softmax layer output 
+        outputArray = forwardOutput.copy() 
+        exps = np.exp(outputArray)
+        dinputs = exps/ np.sum(exps)
         # Gradient calculation and normalization
         dinputs[range(samples), trainingSolutions] -= 1 
+        # Average the gradient across all training samples 
         dinputs = dinputs/samples 
         
-        # Dense layer 2 backpropogation 
+        # Dense layer 2 backpropogation using previous gradient 
         dinputs2 = self.layers[1].backwardsPass(dinputs, "") 
         
         # relu & dense layer 1 backpropogation

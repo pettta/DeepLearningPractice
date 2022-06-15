@@ -47,19 +47,18 @@ model = BasicSequential([
     BasicDenseLayer(input_size=512, output_size=10, activation="softmax") 
 ])
 
-# Forward pass 
-predicted = model(train_images)
+# Forward pass & run 
+fit(model, train_images, train_labels, epochs=10, batch_size=128)
 
-# Tests accuracy 
-predicted_labels = np.argmax(predicted, axis=1) 
-accuracy = np.mean(predicted_labels == train_labels) 
-print(f"accuracy: {accuracy:.2f}")
 
-# Calculate Loss 
-loss = BasicDenseLayer.calculateCategoricalCrossentropy(predicted, train_labels) 
-print(f"loss: {loss:.2f}")
+# Testing accuracy
 
-fit(model, train_images, train_labels, epochs=10, batch_size=128) 
+predictions = model(test_images)
+predicted_labels = np.argmax(predictions, axis=1) # sets equal to the indice of largest value ( what number it is most likely to be corresponds to an indice #) 
+matches = predicted_labels == test_labels 
+print(f"accuracy: {matches.mean():.2f}")
+
+
 
 
 """
