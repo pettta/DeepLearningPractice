@@ -57,15 +57,3 @@ predictions = model(test_images)
 predicted_labels = np.argmax(predictions, axis=1) # sets equal to the indice of largest value ( what number it is most likely to be corresponds to an indice #) 
 matches = predicted_labels == test_labels 
 print(f"accuracy: {matches.mean():.2f}")
-
-
-
-
-"""
-predictions = model(test_images)
-predictions = predictions.numpy() # conversion from tf tensor to numpy tensor
-
-predicted_labels = np.argmax(predictions, axis=1) 
-matches = predicted_labels == test_labels 
-print(f"accuracy: {matches.mean():.2f}")
-"""
