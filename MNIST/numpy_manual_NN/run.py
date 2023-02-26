@@ -4,7 +4,7 @@ import numpy as np
 from batchGen import BatchGenerator 
 from tensorflow.keras.datasets import mnist 
 
-optimizer = SGD(learning_rate=1e-4) 
+optimizer = SGD(learning_rate=1e-3) 
 
 def update_weights(layers): 
     #print("BEFORE WEIGHTS0:", layers[0].W, "\nBIASES0:", layers[0].b) 
@@ -54,7 +54,7 @@ model = BasicSequential([
 
 
 # Forward pass & run 
-fit(model, train_images, train_labels, epochs=10, batch_size=128)
+fit(model, train_images, train_labels, epochs=20, batch_size=128)
 
 
 # Testing accuracy

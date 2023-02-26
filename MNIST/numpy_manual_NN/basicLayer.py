@@ -56,7 +56,7 @@ class BasicDenseLayer:
         self.dweights = np.dot(self.inputs.T, dvalues)
         self.dbiases = np.sum(dvalues, axis=0, keepdims=True) 
         dvalues = np.dot(dvalues, self.W.T) 
-        return dvalues
+        return dvalues / dvalues.size
     
     
     
