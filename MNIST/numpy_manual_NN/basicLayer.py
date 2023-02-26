@@ -47,6 +47,8 @@ class BasicDenseLayer:
             dC/dbL = dinputs (after relu derivative) 
     We can then backpropogate further getting on layer L-1:
             dC/daL-1 = wL * dinputs 
+    Finally, we need to average out all the dC/dwL for all training inputs stored in the matrix 
+    Which finally gives us Gradient C = dvalues / dvalues.size for that layer
     """
     def backwardsPass(self, dinputs, activation=""):
         dvalues = dinputs.copy() 
